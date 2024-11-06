@@ -197,10 +197,12 @@ type                Bearer
 
 Store private key in a file (e.g., private_key.pem), then configure Okta server with private key
 ```
+export OKTA_PRIVATE_KEY=$(cat private_key.pem)
+
 $ vault write oauth2/servers/okta-example-jwt \
     provider=okta \
     provider_options=domain=dev-123456.okta.com \
-    provider_options=private_key=@private_key.pem \
+    provider_options=private_key="$OKTA_PRIVATE_KEY" \
     client_id=0oa1234567890abcdef
 Success! Data written to: oauth2/servers/okta-example-jwt
 ```
@@ -210,19 +212,19 @@ Configure credentials
 $ vault write oauth2/self/my-okta-jwt-auth \
     server=okta-example-jwt \
     grant_type=client_credentials \
-    scopes=okta.users.read
+    scopes=okta.groups.read
 Success! Data written to: oauth2/self/my-okta-jwt-auth
 ```
 
 ```
-$ vault read oauth2/self/my-okta-auth
-Key                 Value
----                 -----
-access_token        eyJra...
-expire_time         2024-01-16T15:38:21.105335834Z
-scopes              [okta.users.read]
-server              okta-example
-type                Bearer
+$ vault read oauth2/self/my-okta-jwt-auth
+Key             Value
+---             -----
+access_token    eyJraWQiOixxxx
+expire_time     2024-11-05T21:41:13.392595-08:00
+scopes          [okta.groups.read]
+server          okta-example-jwt
+type            Bearer
 ```
 
 ## Tips
